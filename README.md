@@ -45,12 +45,30 @@ The Relay/
 ## Implementation Roadmap
 
 - [x] **Project Foundation:** Scaffolding, repository setup, configuration schemas.
-- [ ] **Phase 1: Real Profiling & Stand-in Service**
-  - [ ] Task 1.1: Empirical Groq profiler (latency spread, headers, recovery times, Table 1).
-  - [ ] Task 1.2: Stand-in model service (token streaming, load slowdown, failure injection, calibration).
+- [x] **Phase 1: Real Profiling & Stand-in Service**
+  - [x] Task 1.1: Empirical Groq profiler (latency spread, headers, recovery times, Table 1).
+  - [x] Task 1.2: Stand-in model service (token streaming, load slowdown, failure injection, calibration).
 - [ ] **Phase 2: Ingestion & Multi-Config Retrieval Engine**
 - [ ] **Phase 3: 4-Step Resilient Pipeline with Tool Call & Branch/Loop**
 - [ ] **Phase 4: Concurrency, Rate Limiting & Queueing Policies**
 - [ ] **Phase 5: Load Testing & Experiment Execution**
 - [ ] **Phase 6: Data Synthesis & `results.csv` Verification**
 - [ ] **Phase 7: 2-Page Executive Technical Report**
+
+## Phase 1 Deliverables Summary
+
+### Task 1.1: Empirical Groq Profiler
+- **Module:** `the_relay/profiler/groq_profiler.py`
+- **Output:** Populates empirical rate-limits and header schemas for **Table 1** (RPM: 30, TPM: 6000, RPD: 1000, TPD: 100,000, Concurrency cap: 1-3 in flight).
+- **Features:** SSE streaming parser, accurate TTFT measurement, rate-limit header tracking (`x-ratelimit-*`, `retry-after`), and Table 1 Markdown export.
+
+### Task 1.2: Calibrated Stand-in Model Service
+- **Module:** `the_relay/standin/service.py` & `the_relay/standin/state.py`
+- **Calibration:**
+  - Base TTFT: $\mu = 220\text{ ms}, \sigma = 40\text{ ms}$.
+  - Streaming generation: ~70 tokens/sec (14 ms inter-token delay).
+  - Concurrency slowdown: TTFT penalization factor $1 + 0.45 \times (C - 1)^{1.3}$ for $C$ active in-flight requests.
+  - Rate limiting: Sliding 60-second window enforcing 30 RPM / 6,000 TPM with HTTP 429 payload and `retry-after`.
+  - Quota exhaustion: Immediate short-circuit simulation when daily token budget hits zero (3:00 PM scenario).
+  - Failure injection: Configurable 503 transient server errors and slow successes (>4,000 ms TTFT).
+- **Client:** `the_relay/client.py` provides unified dispatch across Real Groq and the Stand-in model.
