@@ -264,3 +264,4 @@ class GroqProfiler:
             how = r.how_found.replace("|", "\\|")
             lines.append(f"| {r.limit_name} | {val} | {how} | {r.confidence} |")
         return "\n".join(lines)
+

@@ -100,3 +100,4 @@ class ResultsCsvRow(BaseModel):
             "retrieval_setting": self.retrieval_setting,
             "answer_grade": self.answer_grade.value,
         }
+

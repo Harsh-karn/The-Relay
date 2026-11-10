@@ -157,3 +157,4 @@ def test_relay_model_client_dispatch(fast_calibration):
     assert resp.status == RequestStatus.OK
     assert resp.source == SourceType.STAND_IN
     assert resp.text == "Routed via stand-in."
+

@@ -36,3 +36,4 @@ class RelayConfig(BaseModel):
 
 
 config = RelayConfig()
+

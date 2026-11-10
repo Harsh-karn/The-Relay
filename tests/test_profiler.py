@@ -107,3 +107,4 @@ def test_profiler_mocked_429_rate_limit():
         assert resp.status == RequestStatus.RATE_LIMITED
         assert resp.rate_limit_headers.get("retry-after") == "12"
         assert "Rate limit exceeded" in resp.error_message
+

@@ -71,3 +71,4 @@ class RelayModelClient:
         else:
             prompt = "\n".join(f"{m.role}: {m.content}" for m in messages)
             return self.groq.send_single_streaming_request(prompt=prompt)
+
