@@ -45,3 +45,4 @@ def test_specific_paper_contents():
 
     # Paper 3: Dynamic Chunking / Hierarchical
     assert "Dynamic Chunking" in docs["2507.07955v2"].full_text() or "chunking" in docs["2507.07955v2"].full_text().lower()
+

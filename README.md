@@ -53,7 +53,11 @@ The Relay/
   - [x] Task 2.2: Curate 15-question benchmark suite and analyze naive retriever pitfalls.
   - [x] Task 2.3: Multi-configuration RAG retrieval engine with dynamic chunking and re-ranking.
   - [x] Task 2.4: Evaluate retrieval quality vs cost and export Table 3.
-- [ ] **Phase 3: 4-Step Resilient Pipeline with Tool Call & Branch/Loop**
+- [x] **Phase 3: 4-Step Resilient Pipeline with Tool Call & Branch/Loop**
+  - [x] Task 3.1: Pipeline data models and execution telemetry (`the_relay/pipeline/models.py`).
+  - [x] Task 3.2: 4-step pipeline engine with tool invocation and branch/loop logic (`the_relay/pipeline/core.py`).
+  - [x] Task 3.3: Self-verification citation guardrails and unanswerable refusal handling.
+  - [x] Task 3.4: Granular latency dissection (waiting vs working vs retrying).
 - [ ] **Phase 4: Concurrency, Rate Limiting & Queueing Policies**
 - [ ] **Phase 5: Load Testing & Experiment Execution**
 - [ ] **Phase 6: Data Synthesis & `results.csv` Verification**
@@ -106,3 +110,24 @@ The Relay/
 | 1000 words, 2 pieces, re-rank no | 15 | 73.3% | 0.0% | 26.7% | 29 | 182 / 242 | 521 / 680 |
 
 **Selected Setting:** Setting 2 (500 words, 5 pieces, re-rank yes) is chosen as primary because it eliminates retrieval truncation errors (0.0% wrong) with high citation density at negligible latency delta (+17ms TTFT vs Setting 1). When rate limits approach (<20% quota remaining), the engine switches dynamically to degraded mode (clamping to 2 pieces, 0 re-rank overhead).
+
+## Phase 3 Deliverables Summary
+
+### 4-Step Resilient Pipeline Architecture
+- **Module:** `the_relay/pipeline/core.py` & `the_relay/pipeline/models.py`
+- **Execution Flow:**
+  1. **Step 1: Query Deconstruction & Intent Classifier:** Parses query intent, detects topic domains across the 3 papers, checks for known out-of-domain entities (ViT, RLHF, GPU wattages, Mamba), and prepares optimized search arguments.
+  2. **Step 2 (Tool Call): Passage Retrieval (`retrieve_passages`):** Formally invokes the retrieval tool with query arguments and captures candidate passages with author, year, and page-level citation provenance.
+  3. **Step 3 (Branch / Loop): Sufficiency & Ambiguity Evaluation:**
+     - *Loop Trigger:* Evaluates cross-paper terminology ambiguities (e.g., generic "chunking" or "codebook" without paper scope). Automatically refines the query with contextual disambiguation terms and re-executes Step 2 (bounded by `max_loops=2`).
+     - *Branch Trigger:* If textual evidence is missing or entity is out-of-domain, branches to deterministic refusal (`PipelineBranch.REFUSAL`). Otherwise, advances to `PipelineBranch.GROUNDED_ANSWER`.
+  4. **Step 4: Grounded Drafting & Self-Verification Guardrail:**
+     - For refusals: Outputs strict refusal without hallucination (*"The provided papers do not say anything about this topic..."*).
+     - For answers: Synthesizes grounded explanation with parenthetical citations `(Author et al. (Year), Page X)`. Automatically checks that claims are accompanied by citations matching retrieved passages.
+- **Latency Dissection Telemetry:** Records fine-grained timing for every request:
+  - `waiting_ms` (queueing delay)
+  - `working_ms` (pipeline computation & model inference)
+  - `retrying_ms` (backoff delay)
+  - `first_token_ms` (TTFT relative to arrival)
+  - `total_ms` (end-to-end turnaround time)
+  - `delay_before_first_token` boolean flag.

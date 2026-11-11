@@ -60,3 +60,4 @@ def test_grading_correct_grounded_answer():
     ans = "In Section 3.2.2, Vaswani et al. (2017) use h=8 parallel heads with d_k = d_v = 64 and d_model = 512."
     grade = mgr.grade_answer(q, ans, ["Vaswani et al. (2017), Section 3.2.2"])
     assert grade == AnswerGrade.CORRECT
+
