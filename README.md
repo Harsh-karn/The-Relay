@@ -58,7 +58,11 @@ The Relay/
   - [x] Task 3.2: 4-step pipeline engine with tool invocation and branch/loop logic (`the_relay/pipeline/core.py`).
   - [x] Task 3.3: Self-verification citation guardrails and unanswerable refusal handling.
   - [x] Task 3.4: Granular latency dissection (waiting vs working vs retrying).
-- [ ] **Phase 4: Concurrency, Rate Limiting & Queueing Policies**
+- [x] **Phase 4: Concurrency, Rate Limiting & Queueing Policies**
+  - [x] Task 4.1: Adaptive rate limiter with sliding-window RPM/TPM and in-flight concurrency gates.
+  - [x] Task 4.2: Retry manager with exponential backoff, AWS Full Jitter, and global retry budget.
+  - [x] Task 4.3: Resilient dispatcher with queue backpressure shedding and daily budget exhaustion handling.
+  - [x] Task 4.4: Thundering herd and concurrency stress test validation.
 - [ ] **Phase 5: Load Testing & Experiment Execution**
 - [ ] **Phase 6: Data Synthesis & `results.csv` Verification**
 - [ ] **Phase 7: 2-Page Executive Technical Report**
@@ -131,3 +135,24 @@ The Relay/
   - `first_token_ms` (TTFT relative to arrival)
   - `total_ms` (end-to-end turnaround time)
   - `delay_before_first_token` boolean flag.
+
+## Phase 4 Deliverables Summary
+
+### Resilient Concurrency & Queueing Controller
+- **Modules:** `the_relay/resilience/limiter.py`, `the_relay/resilience/retry.py`, `the_relay/resilience/dispatcher.py`
+- **Key Policies:**
+  1. **Sliding-Window Token Bucket & Concurrency Gate:**
+     - Enforces 30 RPM and 6,000 TPM with sliding 60-second window tracking.
+     - Enforces strict in-flight concurrency cap ($C \le 3$) matching real Groq hardware saturation thresholds.
+  2. **Queueing & Backpressure Shedding:**
+     - FIFO request queue with `max_queue_depth=25`. When incoming bursts saturate the queue, surplus requests are shed immediately with HTTP 429 rather than hanging indefinitely.
+     - `client_timeout_s=12.0s`: Requests exceeding client patience are timed out cleanly (`status=timeout`).
+  3. **Daily Budget Exhaustion Policy (3:00 PM Scenario):**
+     - When daily token quota hits zero, the dispatcher short-circuits instantly ($<5\text{ ms}$) with zero downstream LLM invocations:
+       > *"The daily computational research quota has been exhausted. All available model credits have been utilized. Service will resume at 00:00 UTC."*
+  4. **Exponential Backoff with Full Jitter & Global Retry Budget:**
+     - Formula: $T_{\text{backoff}} = \min(T_{\text{max}}, T_{\text{base}} \times 2^{\text{attempt}}) \pm \text{jitter}$ with AWS Full Jitter.
+     - Strict per-request retry ceiling: 2 attempts maximum.
+     - Systemic retry budget: Retries cannot exceed 20% of total system bandwidth, preventing cascading brownouts.
+     - Non-retryable guard: Never retries on 400 Bad Request, Daily Quota Exhaustion, or Client Timeouts.
+  5. **Thundering Herd Mitigation:** Jitter breaks lock-step retry synchronization during burst failures.

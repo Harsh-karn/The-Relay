@@ -82,3 +82,4 @@ def test_latency_breakdown_complete(fast_pipeline):
     assert res.latency.working_ms > 0
     assert res.latency.first_token_ms >= 45.0
     assert res.latency.total_ms >= res.latency.first_token_ms
+

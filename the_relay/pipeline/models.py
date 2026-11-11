@@ -56,3 +56,4 @@ class PipelineResult(BaseModel):
     tokens_out: int = 0
     retrieval_setting_name: str = ""
     grade: Optional[AnswerGrade] = None
+
