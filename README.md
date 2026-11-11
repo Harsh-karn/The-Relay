@@ -67,9 +67,13 @@ The Relay/
   - [x] Task 5.1: Benchmark scenario harness (`the_relay/benchmarks/scenarios.py`).
   - [x] Task 5.2: Execute all 5 mandatory load shapes (Steady, Burst, Sustained Overload, Limit Halved, Budget Exhausted).
   - [x] Task 5.3: Capture raw results into `results/results.csv` and export Table 2a and Table 2b.
-- [ ] **Phase 6: Data Synthesis & `results.csv` Verification**
-- [ ] **Phase 6: Data Synthesis & `results.csv` Verification**
-- [ ] **Phase 7: 2-Page Executive Technical Report**
+- [x] **Phase 6: Data Synthesis & `results.csv` Verification**
+  - [x] Task 6.1: Automated recomputation and validation against results.csv (`scripts/verify_results.py`).
+  - [x] Task 6.2: Verified 100% mathematical consistency across all tables and schemas.
+- [x] **Phase 7: 2-Page Executive Technical Report**
+  - [x] Task 7.1: Author technical report strictly adhering to required headings (`REPORT.md`).
+  - [x] Task 7.2: Vaani product evaluation and architectural feedback.
+  - [x] Task 7.3: Complete uncleaned conversation history export (`data/conversation_history.md`).
 
 ## Phase 1 Deliverables Summary
 
@@ -188,3 +192,22 @@ The Relay/
 
 ### Critical Empirical Finding ("A number we could not have guessed without running it")
 While the API advertises **30 Requests Per Minute**, retrieving 5 passages consumes **~3,000 tokens of input context per query**. Because the Free Tier limits tokens to **6,000 TPM**, the bottleneck is NOT requests, but tokens: the system is choked by TPM after just **2 queries in a 60-second window**, forcing the remaining requests in the steady stream to queue or be rate-limited unless degraded retrieval (2 chunks) is applied.
+
+## Phase 6 & 7 Deliverables Summary
+
+### Data Synthesis & Technical Report
+- **Technical Report:** [`REPORT.md`](file:///c:/Users/harsh/Desktop/The%20Relay/REPORT.md) — 2-page report strictly adhering to all required headings, including:
+  - Architecture design & core decision (TPM budget protection).
+  - Stand-in calibration against Groq measurements.
+  - Complete tables: Table 1 (Limits), Table 2a (Latency), Table 2b (Outcomes), Table 3 (Retrieval).
+  - Latency dissection (waiting vs working vs retrying).
+  - Limit hit policies (RPM vs RPD, degradation, shedding).
+  - Retrieval quality vs cost analysis.
+  - 3 ways this library misleads a naive retriever.
+  - Retry policy and the thundering herd case study.
+  - 3:00 PM daily budget exhaustion message.
+  - Things unsure about, left out, and learned.
+  - Feedback on Vaani.
+  - Full analysis of assistant interactions (prompts that mattered, AI mistakes caught, overruled decisions, personal distinct signature).
+- **Verification Harness:** [`scripts/verify_results.py`](file:///c:/Users/harsh/Desktop/The%20Relay/scripts/verify_results.py) recomputes all table figures directly from [`results/results.csv`](file:///c:/Users/harsh/Desktop/The%20Relay/results/results.csv) to guarantee 100% mathematical consistency.
+- **Conversation Logs:** [`data/conversation_history.md`](file:///c:/Users/harsh/Desktop/The%20Relay/data/conversation_history.md) preserves the raw, uncleaned prompt history across all project phases.
