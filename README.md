@@ -27,7 +27,6 @@ A production-grade, rate-limit-resilient engineering Q&A assistant built over th
   - [The TPM Asymmetry Bottleneck](#the-tpm-asymmetry-bottleneck)
   - [Benchmark Results (Tables 1, 2a, 2b, 3)](#benchmark-results)
 - [Repository Structure](#repository-structure)
-- [Deliverables & Submission Checklist](#deliverables--submission-checklist)
 
 ---
 
@@ -336,17 +335,6 @@ The Relay/
 ├── requirements.txt            # Python dependencies
 └── .env.example                # Example environment configuration
 ```
-
----
-
-## Deliverables & Submission Checklist
-
-- [x] **2-Page Technical Report:** [`REPORT.md`](REPORT.md) adhering strictly to all mandated headings in exact order.
-- [x] **Raw Results Dataset:** [`results.csv`](results.csv) containing all 155 rows with 12 strict columns.
-- [x] **Recomputation Guarantee:** [`scripts/verify_results.py`](scripts/verify_results.py) recomputes all numbers directly from the raw dataset.
-- [x] **Conversational Provenance:** [`data/conversation_history.md`](data/conversation_history.md) preserving uncleaned prompts, assistant errors caught, and overruled architectural choices.
-- [x] **Product Feedback:** Independent technical review of [Vaani.dev](https://www.vaani.dev/) included in Section 9 of [`REPORT.md`](REPORT.md).
-- [x] **Zero Secret Leakage:** `.env` remains git-ignored; zero personal API keys are published.
 
 ---
 
