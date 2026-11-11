@@ -11,6 +11,7 @@ from the_relay.models import (
     RequestStatus,
     AnswerGrade,
     SourceType,
+    ResultsCsvRow,
 )
 from the_relay.retrieval.engine import (
     RelayRetrievalEngine,
@@ -62,6 +63,7 @@ class RetrievalEvaluator:
             self.client = RelayModelClient(source=SourceType.STAND_IN, standin_service=service)
         else:
             self.client = client
+        self.all_rows: List[ResultsCsvRow] = []
 
     def evaluate_setting(
         self,
@@ -167,6 +169,24 @@ class RetrievalEvaluator:
             # Grade response
             grade = self.test_suite.grade_answer(q, resp.text, citations)
             grades.append(grade)
+
+            req_time_iso = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+            self.all_rows.append(
+                ResultsCsvRow(
+                    request_id=f"ret_{setting.piece_size}_{q.id}",
+                    scenario="retrieval_evaluation",
+                    source=self.client.source,
+                    start_time=req_time_iso,
+                    first_token_ms=resp.first_token_ms,
+                    total_ms=resp.total_ms,
+                    status=resp.status,
+                    retries=0,
+                    tokens_in=resp.tokens_in,
+                    tokens_out=resp.tokens_out,
+                    retrieval_setting=setting.display_name(),
+                    answer_grade=grade,
+                )
+            )
 
         n = len(questions)
         correct_count = sum(1 for g in grades if g == AnswerGrade.CORRECT)

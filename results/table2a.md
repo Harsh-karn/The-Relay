@@ -2,8 +2,8 @@
 
 | Scenario | Real or stand-in | Requests sent | Duration (s) | Offered rate (per min) | First token p50 / p95 / p99 (ms) | Total time p50 / p95 / p99 (ms) |
 |---|---|---|---|---|---|---|
-| steady | stand-in | 15 | 34.8 | 25.9 | 20 / 179 / 210 | 5 / 1472 / 2603 |
-| burst | stand-in | 20 | 1.0 | 1200.0 | 250 / 271 / 271 | 11 / 509 / 648 |
-| sustained_overload | stand-in | 35 | 15.4 | 136.1 | 20 / 20 / 20 | 6 / 12012 / 12012 |
-| per_minute_limit_halved | stand-in | 25 | 29.0 | 51.7 | 0 / 0 / 0 | 12011 / 12013 / 12013 |
+| steady | stand-in | 15 | 34.6 | 26.0 | 20 / 129 / 157 | 9 / 1584 / 2365 |
+| burst | stand-in | 20 | 1.0 | 1200.0 | 251 / 271 / 271 | 30 / 464 / 710 |
+| sustained_overload | stand-in | 35 | 15.5 | 135.5 | 20 / 20 / 20 | 7 / 12016 / 12165 |
+| per_minute_limit_halved | stand-in | 25 | 29.1 | 51.6 | 0 / 18 / 20 | 12013 / 12019 / 12230 |
 | daily_budget_exhausted | stand-in | 15 | 0.1 | 9000.0 | 0 / 0 / 0 | 1 / 1 / 1 |

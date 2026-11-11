@@ -56,10 +56,10 @@ All metrics are computed directly from the raw execution log `results/results.cs
 #### Table 2a: Latency, one row per load scenario
 | Scenario | Real or stand-in | Requests sent | Duration (s) | Offered rate (per min) | First token p50 / p95 / p99 (ms) | Total time p50 / p95 / p99 (ms) |
 |---|---|---|---|---|---|---|
-| steady | stand-in | 15 | 34.8 | 25.9 | 20 / 179 / 210 | 5 / 1472 / 2603 |
-| burst | stand-in | 20 | 1.0 | 1200.0 | 250 / 271 / 271 | 11 / 509 / 648 |
-| sustained_overload | stand-in | 35 | 15.4 | 136.1 | 20 / 20 / 20 | 6 / 12012 / 12012 |
-| per_minute_limit_halved | stand-in | 25 | 29.0 | 51.7 | 0 / 0 / 0 | 12011 / 12013 / 12013 |
+| steady | stand-in | 15 | 34.6 | 26.0 | 20 / 129 / 157 | 9 / 1584 / 2365 |
+| burst | stand-in | 20 | 1.0 | 1200.0 | 251 / 271 / 271 | 30 / 464 / 710 |
+| sustained_overload | stand-in | 35 | 15.5 | 135.5 | 20 / 20 / 20 | 7 / 12016 / 12165 |
+| per_minute_limit_halved | stand-in | 25 | 29.1 | 51.6 | 0 / 18 / 20 | 12013 / 12019 / 12230 |
 | daily_budget_exhausted | stand-in | 15 | 0.1 | 9000.0 | 0 / 0 / 0 | 1 / 1 / 1 |
 
 #### Table 2b: Outcomes, same rows
@@ -67,16 +67,16 @@ All metrics are computed directly from the raw execution log `results/results.cs
 |---|---|---|---|---|---|---|---|
 | steady | 33.3% | 66.7% | 0.0% | 0.33 | 1 | 30 | $0.00 |
 | burst | 20.0% | 80.0% | 0.0% | 0.1 | 10 | 29 | $0.00 |
-| sustained_overload | 11.4% | 60.0% | 28.6% | 0.14 | 10 | 29 | $0.00 |
-| per_minute_limit_halved | 0.0% | 44.0% | 56.0% | 0.16 | 8 | 0 | $0.00 |
+| sustained_overload | 11.4% | 60.0% | 28.6% | 0.11 | 10 | 29 | $0.00 |
+| per_minute_limit_halved | 4.0% | 40.0% | 56.0% | 0.12 | 8 | 29 | $0.00 |
 | daily_budget_exhausted | 0.0% | 100.0% | 0.0% | 0.0 | 1 | 21 | $0.00 |
 
 #### Table 3: Retrieval settings (at least three)
 | Setting (piece size, pieces fetched, re-rank yes or no) | Questions asked | Correct and cited % | Wrong % | Correctly refused % | Tokens per answer | First token p50 / p95 (ms) | Total time p50 / p95 (ms) |
 |---|---|---|---|---|---|---|---|
-| 200 words, 3 pieces, re-rank no | 15 | 66.7% | 6.7% | 26.7% | 28 | 166 / 221 | 512 / 644 |
-| 500 words, 5 pieces, re-rank yes | 15 | 73.3% | 0.0% | 26.7% | 29 | 183 / 209 | 524 / 642 |
-| 1000 words, 2 pieces, re-rank no | 15 | 73.3% | 0.0% | 26.7% | 29 | 182 / 242 | 521 / 680 |
+| 200 words, 3 pieces, re-rank no | 15 | 66.7% | 6.7% | 26.7% | 28 | 190 / 222 | 554 / 696 |
+| 500 words, 5 pieces, re-rank yes | 15 | 73.3% | 0.0% | 26.7% | 29 | 181 / 202 | 498 / 683 |
+| 1000 words, 2 pieces, re-rank no | 15 | 73.3% | 0.0% | 26.7% | 29 | 200 / 222 | 518 / 703 |
 
 **A Number We Could Not Have Guessed Without Running It:**  
 **`2 queries = 100% TPM Saturation.`**  
@@ -193,3 +193,4 @@ The assistant initially suggested downloading a multi-gigabyte HuggingFace neura
 
 #### What in This Submission Is Distinctly Mine:
 The formulation of the **TPM-asymmetry bottleneck**, the design of the **dynamic degraded retrieval clamp**, and the rigorous mathematical alignment ensuring that every single number in the report is computable from `results.csv`.
+

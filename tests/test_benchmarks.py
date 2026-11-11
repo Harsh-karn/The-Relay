@@ -36,6 +36,7 @@ def test_runner_executes_all_five_scenarios(fast_runner):
         overload_n=10,
         halved_n=6,
         exhausted_n=4,
+        include_retrieval_eval=False,
     )
     assert len(results) == 5
     names = [r.scenario_name for r in results]
@@ -54,6 +55,7 @@ def test_export_results_csv_schema(fast_runner, tmp_path):
         overload_n=4,
         halved_n=3,
         exhausted_n=2,
+        include_retrieval_eval=False,
     )
     csv_path = fast_runner.export_results_csv()
     assert csv_path.exists()
@@ -92,6 +94,7 @@ def test_compute_tables_2a_and_2b(fast_runner):
         overload_n=6,
         halved_n=4,
         exhausted_n=3,
+        include_retrieval_eval=False,
     )
     t2a = fast_runner.compute_table2a()
     t2b = fast_runner.compute_table2b()

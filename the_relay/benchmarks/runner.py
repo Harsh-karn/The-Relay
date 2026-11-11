@@ -76,6 +76,7 @@ class BenchmarkRunner:
         self.results_dir.mkdir(parents=True, exist_ok=True)
         self.scenarios = BenchmarkScenarios(self.dispatcher)
         self.all_scenario_results: List[ScenarioResult] = []
+        self.extra_rows: List[ResultsCsvRow] = []
 
     def run_all(
         self,
@@ -84,8 +85,9 @@ class BenchmarkRunner:
         overload_n: int = 35,
         halved_n: int = 25,
         exhausted_n: int = 15,
+        include_retrieval_eval: bool = True,
     ) -> List[ScenarioResult]:
-        """Executes all 5 load scenarios."""
+        """Executes all 5 load scenarios and optional retrieval evaluation."""
         results: List[ScenarioResult] = []
 
         # Check if real Groq key is available for Steady run
@@ -107,14 +109,24 @@ class BenchmarkRunner:
         results.append(self.scenarios.run_daily_budget_exhausted(n_requests=exhausted_n, source=SourceType.STAND_IN))
 
         self.all_scenario_results = results
+
+        if include_retrieval_eval:
+            from the_relay.retrieval.evaluator import RetrievalEvaluator
+            evaluator = RetrievalEvaluator(client=self.dispatcher.pipeline.client)
+            evaluator.run_all_settings()
+            self.extra_rows = evaluator.all_rows
+
         return results
 
     def export_results_csv(self, filename: str = "results.csv") -> Path:
-        """Writes the mandatory results.csv file with strictly validated schema."""
+        """Writes the mandatory results.csv file with strictly validated schema to results/ and root."""
         out_path = self.results_dir / filename
+        root_path = config.base_dir / filename
+
         all_rows: List[ResultsCsvRow] = []
         for s in self.all_scenario_results:
             all_rows.extend(s.rows)
+        all_rows.extend(self.extra_rows)
 
         fieldnames = [
             "request_id",
@@ -131,11 +143,12 @@ class BenchmarkRunner:
             "answer_grade",
         ]
 
-        with open(out_path, "w", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=fieldnames)
-            writer.writeheader()
-            for row in all_rows:
-                writer.writerow(row.to_csv_dict())
+        for p in (out_path, root_path):
+            with open(p, "w", newline="", encoding="utf-8") as f:
+                writer = csv.DictWriter(f, fieldnames=fieldnames)
+                writer.writeheader()
+                for row in all_rows:
+                    writer.writerow(row.to_csv_dict())
 
         return out_path
 
