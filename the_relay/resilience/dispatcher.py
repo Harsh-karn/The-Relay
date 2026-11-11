@@ -207,3 +207,4 @@ class ResilientDispatcher:
             tokens_out=len(DAILY_BUDGET_EXHAUSTED_MESSAGE.split()),
             retrieval_setting_name=self.pipeline.engine.setting.display_name(),
         )
+

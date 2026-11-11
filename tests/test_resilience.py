@@ -139,3 +139,4 @@ def test_thundering_herd_case_study(test_setup):
     # All dispatched requests finish with valid status (OK, RATE_LIMITED, or TIMEOUT)
     for r in results:
         assert r.status in (RequestStatus.OK, RequestStatus.RATE_LIMITED, RequestStatus.TIMEOUT)
+

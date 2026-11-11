@@ -97,3 +97,4 @@ class RetryManager:
         with self._lock:
             self.total_attempts = 0
             self.retries_consumed = 0
+
