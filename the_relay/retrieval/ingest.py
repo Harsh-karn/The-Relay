@@ -130,3 +130,4 @@ class PaperCorpus:
         if not self.documents:
             self.parse_all()
         return self.documents
+

@@ -45,6 +45,7 @@ htmlcov/
 Thumbs.db
 
 # Project outputs & temporary files
+data/papers/*.pdf
 results/*.tmp
 *.log
 scratch/
