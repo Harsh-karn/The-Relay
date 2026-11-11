@@ -143,7 +143,11 @@ class BenchmarkRunner:
             "answer_grade",
         ]
 
-        for p in (out_path, root_path):
+        paths_to_write = [out_path]
+        if self.results_dir == config.results_dir and root_path != out_path:
+            paths_to_write.append(root_path)
+
+        for p in paths_to_write:
             with open(p, "w", newline="", encoding="utf-8") as f:
                 writer = csv.DictWriter(f, fieldnames=fieldnames)
                 writer.writeheader()
